@@ -14,7 +14,7 @@ For this challenge data from 4 running races is provided:
 - NN Egmond Halve Marathon (2017-2019)
 - Groet uit Schoorl Run (2017-2019)
 
-The race results and weather data can be found in the [data](data) directory.
+The race results, weather and course data can be found in the [data](data) directory.
 Each subdirectory there contains the data files as well as a README.md file that explains the format of the data and some remarks.
 
 At this (TODO) link there is more data available that is provided by [Le Champion](https://www.lechampion.nl/) that can only be accessed during the Sport Data Challenge and that has to be deleted at the end of the Challenge.
