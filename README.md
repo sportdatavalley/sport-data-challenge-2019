@@ -1,8 +1,6 @@
 # Sport Data Challenge 2019
 
-                            | 
-:--------------------------:|:-------------------------:
-![](sportdatavalley.png)    | ![](Amsterdam Data Science)
+![](sportdatavalley.png) ![](amsterdamdatascience.png)
 
 The _Sport Data Challenge 2019_ is organized by [Sport Data Valley](https://sportdatavalley.nl) and [Amsterdam Data Science](https://amsterdamdatascience.nl/).
 
