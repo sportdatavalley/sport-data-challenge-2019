@@ -9,7 +9,7 @@ The race results and weather data can be found in [this](data) directory.
 Each subdirectory there contains the data files as well as a data_dictionairy.md file that explains the format of the data and some remarks.
 
 At this (TODO) link there is more data available that can only be accessed during the Sport Data Challenge and that has to be deleted at the end of the Challenge.
-Instructions on how to use the data and the password is available at the organization.
+Instructions on how to use the data and the password is available from the organization.
 
 ## Slack workspace
 The organization will use this (TODO) Slack workspace for communication during the day.
