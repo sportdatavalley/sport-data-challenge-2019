@@ -14,7 +14,7 @@ For simple mapping purposes and to do some analyses on the altitude profiles the
 Although tcx files are xml files, it is easier to work with csv files, so we also provided a conversion to csv file for each course.
 
 | column name   | type (and unit)           | description                   | remarks |
-| ------------- | ------------------------- | ----------------------------- | ------- |
+| :------------ | :------------------------ | :---------------------------- | :------ |
 | distance      | float (meters)            | accumulating distance         |         |
 | altitude      | float (meters)            | height above see level        |         |
 | latitude      | float (decimal degrees)   | latitude of gps coordinates   |         |

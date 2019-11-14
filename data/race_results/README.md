@@ -4,7 +4,7 @@ All the data is retrieved from MYLAPS Sporthive.
 You can also view the data at [their website](https://results.sporthive.com/).
 
 | column name       | type (and unit)       | description                                   | remarks |
-| -------------     | --------------------- | --------------------------------------------- | ------- |
+| :------------     | :-------------------- | :-------------------------------------------- | :------ |
 | id                | string                | unique id of race result                      |  |
 | hashed_name       | string                | hash of athlete name                          | Due to typos in the name or people with identical names it cannot be guaranteed that one hash represents a single person |
 | event_name        | string                | name of the event                             |  |
