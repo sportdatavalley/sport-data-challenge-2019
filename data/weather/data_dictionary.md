@@ -3,7 +3,7 @@
 The weather data is retrieved from KNMI.
 [This](https://www.knmi.nl/kennis-en-datacentrum/achtergrond/data-ophalen-vanuit-een-script) website explains how the data can be retrieved.
 For each race the nearest weather stations were selected.
-In [this file](scripts/constants.py) you can see which weather stations are used for which event.
+In [this file](../../scripts/constants.py) you can see which weather stations are used for which event.
 
 In each API response KNMI provides a legend that explains the data.
 this legend is included at the bottom of this document.
