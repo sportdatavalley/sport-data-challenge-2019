@@ -9,6 +9,7 @@ verify_ssl = true
 requests = "*"
 pandas = "*"
 ipython = "*"
+untangle = "*"
 
 [requires]
 python_version = "3.7"
