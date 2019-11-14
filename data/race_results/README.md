@@ -1,4 +1,4 @@
-# Data dictionary for race results
+# Explanation of race results data
 
 All the data is retrieved from MYLAPS Sporthive.
 You can also view the data at [their website](https://results.sporthive.com/).

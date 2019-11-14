@@ -6,7 +6,7 @@ This repository contains the data (and the code to retrieve it) for the challeng
 
 ## Data
 The race results and weather data can be found in [this](data) directory.
-Each subdirectory there contains the data files as well as a data_dictionairy.md file that explains the format of the data and some remarks.
+Each subdirectory there contains the data files as well as a README.md file that explains the format of the data and some remarks.
 
 At this (TODO) link there is more data available that can only be accessed during the Sport Data Challenge and that has to be deleted at the end of the Challenge.
 Instructions on how to use the data and the password is available from the organization.

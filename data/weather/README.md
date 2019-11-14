@@ -1,4 +1,4 @@
-# Data dictionary for weather data
+# Explanation of weather data
 
 The weather data is retrieved from KNMI.
 [This](https://www.knmi.nl/kennis-en-datacentrum/achtergrond/data-ophalen-vanuit-een-script) website explains how the data can be retrieved.
