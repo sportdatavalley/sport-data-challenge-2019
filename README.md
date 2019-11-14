@@ -31,4 +31,4 @@ You are free to create a private Slack channel within this workspace for your te
 Feel free to submit a pull request if you spot errors in the data or code.
 
 The results of your team at this Sport Data Challenge may also be contributed back to this repo.
-To do this, create a subdirectory of the [results](results/) directory with your team name (e.g. `results/your_team_name/`) and create a PR.
+To do this, create a subdirectory of the [results](results/) directory with your team name (e.g. `results/your_team_name/`) and create a pull request.
