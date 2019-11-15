@@ -4,12 +4,25 @@
 
 The _Sport Data Challenge 2019_ is organized by [Sport Data Valley](https://sportdatavalley.nl) and [Amsterdam Data Science](https://amsterdamdatascience.nl/).
 
+## General information
 Schedule:
 - 12:30 Welcome & Lunch
 - 13:00 Keynote & Introduction
 - 13:30 Challenge
 - 19:00 Pizza & Wrap-up
 - 20:00 Ceremony & Drinks
+
+Assessment:
+- Creativity solution
+- Creativity analysis
+- Added value for the customer (Le Champion)
+- Added value for society
+- Originality of the question
+
+Possible questions:
+- What’s needed to run a sub 2 hour Amsterdam Marathon? 
+- Is it possible to predict performance, drop-outs or alternative profiles?
+- What’s the best event planning looking at registration and marketing? 
 
 
 This repository contains the data (and the code to retrieve it) for the challenge, as well as some other instructions.
