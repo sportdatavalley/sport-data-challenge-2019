@@ -17,14 +17,15 @@ Data from 4 running races is provided:
 The race results, weather and course data can be found in the [data](data) directory.
 Each subdirectory contains the data files as well as a README.md file that explains the format of the data and some remarks.
 
-At this (TODO) link there is more data available that is provided by [Le Champion](https://www.lechampion.nl/).
+At [this](https://send.firefox.com/download/8981a7a4ecfc0385/#pQtNulL7j8jgEjRjKjgN5g) link there is more data available that is provided by [Le Champion](https://www.lechampion.nl/).
 This data can only be accessed during the Sport Data Challenge and has to be deleted at the end of the Challenge.
 The data includes information about marketing e-mails and course information about the running races.
-Instructions on how to use the data (and the password to download it) is available at the organization and will be provided to your team at the team briefing at the start of the event.
+Instructions on how to use the data (and the password to download and open the files) is available at the organization and will be provided to your team at the team briefing at the start of the event.
 
 
 ## Slack workspace
-The organization will use this (TODO) Slack workspace for communication during the day.
+The organization will use [this](https://join.slack.com/t/sportdatachal-whe3839/shared_invite/enQtODM2MDI5NjI1Mjg1LTdjZGU5NGExYjhkOTc2MjIxOWM0YjQyNTlkMmE3ZmM1ODU1YWQ3NDJhODE1ZTk4MjY3MDZlZDUxNzc3MTE0MjU) Slack workspace for communication during the day.
+Click the link to join this workspace.
 You are free to create a private Slack channel within this workspace for your team communication.
 
 
