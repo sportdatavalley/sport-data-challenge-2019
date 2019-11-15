@@ -12,7 +12,7 @@ Schedule:
 - 19:00 Pizza & Wrap-up
 - 20:00 Ceremony & Drinks
 
-Assessment:
+Assessment criteria:
 - Creativity solution
 - Creativity analysis
 - Added value for the customer (Le Champion)
