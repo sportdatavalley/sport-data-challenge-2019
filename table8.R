@@ -16,22 +16,17 @@ tracks <- list(amsterdam_marathon = read.csv('./data/courses/amsterdam_marathon.
                egmond_halve_marathon = read.csv('./data/courses/egmond_halve_marathon.csv', stringsAsFactors = FALSE),
                groet_uit_schoorl_run = read.csv('./data/courses/groet_uit_schoorl.csv', stringsAsFactors = FALSE))
 
-# TODO: this step will become a selector in a shiny app
-event <- "amsterdam_marathon"
-date <- "2019-10-20"
-distance <- 42195
-# steps for the interpolation
-distance_tick <- 100
-# time ticks for the animation in seconds
-time_tick <- 200
-
-calculate_congestion <- function(event, date, distance, distance_tick, time_tick){
+calculate_congestion <- function(event, date, distance_tick, time_tick){
   
   # get the track data for the selected event 
   track <- tracks[[event]]
   
   # filter the raw results based on the selection
-  raw_results <- results[results$event_name == event & results$distance == distance & results$date == date, ]
+  raw_results <- results[results$event_name == event & results$date == date, ]
+  
+  # track data only available for the longest distance of an event
+  distance <- max(raw_results$distance)
+  raw_results <- raw_results[raw_results$distance == distance, ]
   
   # clean the few doubles - note: there are double hashed_names still and that's correct
   raw_results[c('race', 'id')] <- NULL 
@@ -48,9 +43,6 @@ calculate_congestion <- function(event, date, distance, distance_tick, time_tick
   
   # add teh finish result back in
   y_names <- c(observation_names, 'split_finish')
-  
-  # steps in the distances actually observed
-  nr_observations <- length(observation_names)
   
   # remove all non-digit characters from the observation names to get the distances in km and convert it into a number then multiply by a 1000 to get the distance in meters
   x_observed <- as.numeric(unlist(lapply(observation_names, function(name){gsub(pattern = "\\D+", replacement = "", x = name)}))) * 1000
@@ -89,23 +81,23 @@ calculate_congestion <- function(event, date, distance, distance_tick, time_tick
   
   # function to get the level of congestion over the track at a given time
   get_congestion_at_time <- function(target_time){
+    
+    # Currying of the function to the specific time of interest
+    get_position_at_target_time <- function(df){
       
-      # Currying of the function to the specific time of interest
-      get_position_at_target_time <- function(df){
-        
-        # get the position of a runner at the target time
-        position <- get_position_at_time(df, target_time) * distance_tick
-        
-        # if position is found, get the coordinates along the track based on distance ran
-        if(position > 0){
-          latitude <- unique(track$latitude[track$distance == max(track$distance[track$distance<position])])
-          longitude <- unique(track$longitude[track$distance == max(track$distance[track$distance<position])])
-        } else { # otherwise put them at the starting point
-          latitude <- track$latitude[1]
-          longitude <- track$longitude[1]
-        }
-        
-        return(c(position, latitude, longitude))
+      # get the position of a runner at the target time
+      position <- get_position_at_time(df, target_time) * distance_tick
+      
+      # if position is found, get the coordinates along the track based on distance ran
+      if(position > 0){
+        latitude <- unique(track$latitude[track$distance == max(track$distance[track$distance<position])])
+        longitude <- unique(track$longitude[track$distance == max(track$distance[track$distance<position])])
+      } else { # otherwise put them at the starting point
+        latitude <- track$latitude[1]
+        longitude <- track$longitude[1]
+      }
+      
+      return(c(position, latitude, longitude))
     }
     
     # get the position of each runner at the target time
@@ -137,12 +129,33 @@ calculate_congestion <- function(event, date, distance, distance_tick, time_tick
   
   # get the congestion data at each time point for the animation
   congestion_multiple <- do.call(rbind, foreach(target_time = times) %dopar% {get_congestion_at_time(target_time)})
-
+  
   track_points <- do.call(rbind, lapply(times, 
                                         function(target_time){
                                           return(cbind(track, data.frame(target_time = target_time)))
                                         }))
+  
+  return(list(track_points = track_points, congestion = congestion_multiple))
 }
+
+# TODO: pre-calculate all event-date combos
+# congestion_info <- list(amsterdam_marathon = calculate_congestion(event = amsterdam_marathon, date, distance_tick, time_tick),
+#                dam_tot_damloop = calculate_congestion(event, date, distance, distance_tick, time_tick),
+#                egmond_halve_marathon = calculate_congestion(event, date, distance, distance_tick, time_tick),
+#                groet_uit_schoorl_run = calculate_congestion(event, date, distance, distance_tick, time_tick))
+
+# TODO: this step will become a selector in a shiny app
+event <- "amsterdam_marathon"
+date <- "2019-10-20"
+# steps for the interpolation
+distance_tick <- 100
+# time ticks for the animation in seconds
+time_tick <- 200
+
+congestion_info <- calculate_congestion(event, date, distance_tick, time_tick)
+  
+track_points <- congestion_info$track_points
+congestion_multiple <- congestion_info$congestion
 
 # create a plot of the track and add the congestion data 
 plot <- ggplot(track_points, aes(x=longitude, y=latitude)) +
