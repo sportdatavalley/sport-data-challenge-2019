@@ -4,27 +4,14 @@ library(gganimate)
 # race results
 results <- read.csv("./data/race_results/results.csv", stringsAsFactors = FALSE)
 
+# TODO: this list may have to be extended if there are other events in the complete dataset
 # track data with names corresponding to the events
 tracks <- list(amsterdam_marathon = read.csv('./data/courses/amsterdam_marathon.csv', stringsAsFactors = FALSE),
                dam_tot_damloop = read.csv('./data/courses/dam_tot_damloop.csv', stringsAsFactors = FALSE),
                egmond_halve_marathon = read.csv('./data/courses/egmond_halve_marathon.csv', stringsAsFactors = FALSE),
                groet_uit_schoorl_run = read.csv('./data/courses/groet_uit_schoorl.csv', stringsAsFactors = FALSE))
 
-# ams <- read.csv('./data/courses/amsterdam_marathon.csv')
-# dam <- read.csv('./data/courses/dam_tot_damloop.csv')
-# egmond <- read.csv('./data/courses/egmond_halve_marathon.csv')
-# groet <- read.csv('./data/courses/groet_uit_schoorl.csv')
-
-# # track plots
-# plot(ams$latitude~ams$longitude)
-# plot(dam$latitude~dam$longitude)
-# plot(egmond$latitude~egmond$longitude)
-# plot(groet$latitude~groet$longitude)
-
-# restrict data to most recent full marathon in Amsterdam
-# this step will become a selector in a shiny app
-# TODO: the variable naming is very specific, should be more generic
-
+# TODO: this step will become a selector in a shiny app
 event <- "amsterdam_marathon"
 date <- "2019-10-20"
 distance <- 42195
@@ -37,23 +24,22 @@ track <- tracks[[event]]
 # filter the raw results based on the selection
 raw_results <- results[results$event_name == event & results$distance == distance & results$date == date, ]
 
-# ams_results_all <- results[results$event_name == "amsterdam_marathon", ]
-# ams_results_marathon <- ams_results_all[ams_results_all$distance == distance, ]
-# ams_results_marathon_recent <- ams_results_marathon[ams_results_marathon$date == "2019-10-20", ]
-
 # clean the few doubles - note: there are double hashed_names still and that's correct
 raw_results[c('race', 'id')] <- NULL 
 raw_results <- unique(raw_results)
 
-# ams_results_marathon_recent[c('race', 'id')] <- NULL 
-# ams_results_marathon_recent <- unique(ams_results_marathon_recent)
+# names of the columns that mark the observed times at specific distances are following the naming convention split_XXX
+all_observation_names <- names(results)[substr(names(results), 1, 6) == "split_"]
 
-# TODO: this can be different for some events and should be more general
-# names of the columns that mark the observed times at specific distances
-observation_names <- c('split_5k', 'split_10k', 'split_15k', 'split_20k', 'split_25k', 'split_30k', 'split_35k', 'split_40k')
+# we are only interested in the ones with data in it
+filled_observation_names <- all_observation_names[colSums(raw_results[all_observation_names], na.rm = TRUE) > 0]
+
+# filter out the special ones not marking a fixed distance
+observation_names <- setdiff(filled_observation_names, c('split_half', 'split_finish'))
+
+# add teh finish result back in
 y_names <- c(observation_names, 'split_finish')
 
-# TODO: this can be different for some events and should be more general
 # steps in the distances actually observed
 nr_observations <- length(observation_names)
 
