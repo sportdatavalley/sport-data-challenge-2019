@@ -1,6 +1,7 @@
 library(shiny)
 library(ggplot2)
 library(gganimate)
+library(shinycustomloader)
 
 load("precalculated_congestion_data.RData")
 source("congestion.R")
@@ -20,9 +21,8 @@ ui <- fluidPage(
       column(3, numericInput("timeTick", "Time tick:", 200, min = 100, max = 1200, step = 100)),
       style = "min-height: 20px;padding: 19px;margin-bottom: 20px;background-color: #f5f5f5;border: 1px solid #e3e3e3;border-radius: 4px;-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);box-shadow: inset 0 1px 1px rgba(0,0,0,.05);"
     ),
-    fluidRow(
-      column(8, imageOutput("congestionPlot"))
-    )
+    # fluidRow(column(8, imageOutput("congestionPlot")))
+    shinycustomloader::withLoader(imageOutput("congestionPlot"))
   )
 )
 
@@ -34,17 +34,15 @@ server <- function(input, output) {
     
   })
   
-  output$congestionPlot <- renderPlot({
+  output$congestionPlot <- renderImage({
     
+    require(input$event)
     require(input$date)
+    require(input$distanceTick)
+    require(input$timeTick)
     
     precalculated_distance_ticks <- unique(all_congestions$distance_tick[all_congestions$event == as.character(input$event) & all_congestions$date == as.character(input$date)])
     precalculated_time_ticks <- unique(all_congestions$time_tick[all_congestions$event == as.character(input$event) & all_congestions$date == as.character(input$date)])
-    
-    print(input$distanceTick)
-    print(precalculated_distance_ticks)
-    print(input$timeTick)
-    print(precalculated_time_ticks)
     
     # if the required setup is not pre-calculated, calculate it on the fly
     if (!((input$distanceTick %in% precalculated_distance_ticks) & (input$timeTick %in% precalculated_time_ticks))) {
@@ -89,16 +87,27 @@ server <- function(input, output) {
                                                all_congestions$time_tick == input$timeTick, ]
     }
     
+    # A temp file to save the output.
+    # This file will be removed later by renderImage
+    outfile <- tempfile(fileext='.gif')
+    
     # create a plot of the track and add the congestion data 
-    plot <- ggplot(track_points, aes(x=longitude, y=latitude)) +
+    animation <- ggplot(track_points, aes(x=longitude, y=latitude)) +
       geom_point(color='black') +
       geom_point(data = congestion_multiple, aes(x=V3, y=V2, size=x), color='red')
     
     # create the animation
-    plot + transition_time(target_time) +
-      labs(title = "Time elapsed: {frame_time}")
-  })
-  
+    anim_save("outfile.gif",
+              animation + transition_time(target_time) +
+                labs(title = "Time elapsed: {frame_time}"))
+
+    # Return a list containing the filename
+    list(src = "outfile.gif",
+         contentType = 'image/gif'
+         # width = 400,
+         # height = 300,
+         # alt = "This is alternate text"
+    )}, deleteFile = TRUE)
 }
 
 # Run the application 
