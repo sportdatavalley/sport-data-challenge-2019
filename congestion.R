@@ -1,4 +1,4 @@
-calculate_congestion <- function(event, date, distance_tick, time_tick){
+calculate_congestion <- function(event, date, distance_tick, time_tick, results, tracks){
   
   # get the track data for the selected event 
   track <- tracks[[event]]

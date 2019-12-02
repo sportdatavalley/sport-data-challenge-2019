@@ -26,7 +26,9 @@ congestion_info <- lapply(1:nrow(precalculated),
                             calculate_congestion(event = precalculated$event_name[row_id], 
                                                  date = precalculated$date[row_id], 
                                                  distance_tick = precalculated$distance_tick[row_id], 
-                                                 time_tick = precalculated$time_tick[row_id])
+                                                 time_tick = precalculated$time_tick[row_id],
+                                                 results = results,
+                                                 tracks = tracks)
                           })
 
 all_track_points <- do.call(rbind, lapply(congestion_info, function(element){return(element[[1]])}))

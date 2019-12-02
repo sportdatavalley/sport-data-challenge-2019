@@ -15,6 +15,11 @@ track_points <- all_track_points[all_track_points$event == selected_event &
                                    all_track_points$date == selected_date & 
                                    all_track_points$distance_tick == selected_distance_tick & 
                                    all_track_points$time_tick == selected_time_tick, ]
+
+track <- unique(track_points[c("distance", "altitude", "latitude", "longitude" )])
+track_start <- track[1, ]
+track_end <- track[dim(track)[1], ]
+
 congestion_multiple <- all_congestions[all_congestions$event == selected_event & 
                                          all_congestions$date == selected_date & 
                                          all_congestions$distance_tick == selected_distance_tick & 
