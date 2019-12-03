@@ -2,6 +2,8 @@ library(shiny)
 library(ggplot2)
 library(gganimate)
 library(shinycustomloader)
+library(foreach)
+library(doParallel)
 
 load("precalculated_congestion_data.RData")
 source("congestion.R")
@@ -28,6 +30,7 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+
   output$dateSelector <- renderUI({
     selectInput("date", "Select date:", 
                 choices=unique(all_congestions$date[all_congestions$event == input$event]))
@@ -40,17 +43,16 @@ server <- function(input, output) {
     require(input$date)
     require(input$distanceTick)
     require(input$timeTick)
-    
+
     precalculated_distance_ticks <- unique(all_congestions$distance_tick[all_congestions$event == as.character(input$event) & all_congestions$date == as.character(input$date)])
     precalculated_time_ticks <- unique(all_congestions$time_tick[all_congestions$event == as.character(input$event) & all_congestions$date == as.character(input$date)])
     
-    # if the required setup is not pre-calculated, calculate it on the fly
-    if (!((input$distanceTick %in% precalculated_distance_ticks) & (input$timeTick %in% precalculated_time_ticks))) {
+    # check if all inputs are already loaded
+    if (!is.null(input$date)) {
       
-      tryCatch(expr = {
-        results
-      },
-      error = function(cond){
+      # if the required setup is not pre-calculated, calculate it on the fly and add it to the precalculated things
+      if (!((input$distanceTick %in% precalculated_distance_ticks) & (input$timeTick %in% precalculated_time_ticks))) {
+        
         # register the cores for parallel computing
         registerDoParallel(cores=parallel::detectCores() - 1)
         
@@ -64,18 +66,22 @@ server <- function(input, output) {
                        egmond_halve_marathon = read.csv('./data/courses/egmond_halve_marathon.csv', stringsAsFactors = FALSE),
                        groet_uit_schoorl_run = read.csv('./data/courses/groet_uit_schoorl.csv', stringsAsFactors = FALSE))
         
-      },
-      finally = {      
         congestion_info <- calculate_congestion(event = input$event, 
                                                 date = input$date,
                                                 distance_tick = input$distanceTick,
                                                 time_tick = input$timeTick,
                                                 results = results,
                                                 tracks = tracks)
-        track_points <- congestion_info[[1]]
-        congestion_multiple <- congestion_info[[2]]
-      })
-    } else {
+        all_track_points <- rbind(all_track_points, congestion_info[[1]])
+        all_congestions <- rbind(all_congestions, congestion_info[[2]])
+        
+        precalculated_distance_ticks <- unique(all_congestions$distance_tick[all_congestions$event == as.character(input$event) & all_congestions$date == as.character(input$date)])
+        precalculated_time_ticks <- unique(all_congestions$time_tick[all_congestions$event == as.character(input$event) & all_congestions$date == as.character(input$date)])
+        
+        save(list = c("all_track_points", "all_congestions"), file = "precalculated.RData")
+
+      }
+        
       track_points <- all_track_points[all_track_points$event == input$event & 
                                          all_track_points$date == input$date & 
                                          all_track_points$distance_tick == input$distanceTick & 
@@ -85,29 +91,28 @@ server <- function(input, output) {
                                                all_congestions$date == input$date & 
                                                all_congestions$distance_tick == input$distanceTick & 
                                                all_congestions$time_tick == input$timeTick, ]
+      
+      # A temp file to save the output.
+      # This file will be removed later by renderImage
+      outfile <- tempfile(fileext='.gif')
+      
+      # create a plot of the track and add the congestion data 
+      animation <- ggplot(track_points, aes(x=longitude, y=latitude)) +
+        geom_point(color='black') +
+        geom_point(data = congestion_multiple, aes(x=V3, y=V2, size=x), color='red')
+      
+      # create the animation
+      anim_save("outfile.gif",
+                animation + transition_time(target_time) +
+                  labs(title = "Time elapsed: {frame_time}"))
+      
+      # Return a list containing the filename
+      list(src = "outfile.gif", contentType = 'image/gif')
+      
+    } else {
+      NULL
     }
-    
-    # A temp file to save the output.
-    # This file will be removed later by renderImage
-    outfile <- tempfile(fileext='.gif')
-    
-    # create a plot of the track and add the congestion data 
-    animation <- ggplot(track_points, aes(x=longitude, y=latitude)) +
-      geom_point(color='black') +
-      geom_point(data = congestion_multiple, aes(x=V3, y=V2, size=x), color='red')
-    
-    # create the animation
-    anim_save("outfile.gif",
-              animation + transition_time(target_time) +
-                labs(title = "Time elapsed: {frame_time}"))
-
-    # Return a list containing the filename
-    list(src = "outfile.gif",
-         contentType = 'image/gif'
-         # width = 400,
-         # height = 300,
-         # alt = "This is alternate text"
-    )}, deleteFile = TRUE)
+  }, deleteFile = TRUE)
 }
 
 # Run the application 
