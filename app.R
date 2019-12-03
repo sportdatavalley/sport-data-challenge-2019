@@ -39,10 +39,10 @@ server <- function(input, output) {
   
   output$congestionPlot <- renderImage({
     
-    require(input$event)
-    require(input$date)
-    require(input$distanceTick)
-    require(input$timeTick)
+    req(input$event)
+    req(input$date)
+    req(input$distanceTick)
+    req(input$timeTick)
 
     precalculated_distance_ticks <- unique(all_congestions$distance_tick[all_congestions$event == as.character(input$event) & all_congestions$date == as.character(input$date)])
     precalculated_time_ticks <- unique(all_congestions$time_tick[all_congestions$event == as.character(input$event) & all_congestions$date == as.character(input$date)])
@@ -78,7 +78,7 @@ server <- function(input, output) {
         precalculated_distance_ticks <- unique(all_congestions$distance_tick[all_congestions$event == as.character(input$event) & all_congestions$date == as.character(input$date)])
         precalculated_time_ticks <- unique(all_congestions$time_tick[all_congestions$event == as.character(input$event) & all_congestions$date == as.character(input$date)])
         
-        save(list = c("all_track_points", "all_congestions"), file = "precalculated.RData")
+        save(list = c("all_track_points", "all_congestions"), file = "precalculated_congestion_data.RData")
 
       }
         
@@ -99,12 +99,15 @@ server <- function(input, output) {
       # create a plot of the track and add the congestion data 
       animation <- ggplot(track_points, aes(x=longitude, y=latitude)) +
         geom_point(color='black') +
-        geom_point(data = congestion_multiple, aes(x=V3, y=V2, size=x), color='red')
+        geom_point(data = congestion_multiple, aes(x=V3, y=V2, size=x), color='red') +
+        labs(title = "Time elapsed: {frame_time}") + 
+        transition_time(target_time)
+      
+      animate(animation, renderer = gifski_renderer())
+      anim_save("outfile.gif")
       
       # create the animation
-      anim_save("outfile.gif",
-                animation + transition_time(target_time) +
-                  labs(title = "Time elapsed: {frame_time}"))
+      # anim_save(filename = "outfile.gif", animation = animation)
       
       # Return a list containing the filename
       list(src = "outfile.gif", contentType = 'image/gif')
